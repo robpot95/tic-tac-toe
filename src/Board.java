@@ -1,17 +1,29 @@
 import java.util.ArrayList;
 
+enum BoardState {
+    NONE,
+    DRAW,
+    WINNER,
+}
+
 class Board {
     private Tile[][] board;
     private int size = 3;
+    private BoardState state;
 
     public Board() {
-        new Board(3);
+        initBoard(3);
     }
 
     public Board(int size) {
+        initBoard(size);
+    }
+
+    private void initBoard(int size) {
         // Create board depending on which size they choose
         this.board = new Tile[size][size];
         this.size = size;
+        this.state = BoardState.NONE;
         for (int row = 0; row < size; row++){
             for (int col = 0; col < size; col++) {
                 board[row][col] = new Tile();
@@ -51,10 +63,93 @@ class Board {
             System.out.print(owner != null ? owner.getLetter() : "⬜");
         }
 
-        System.out.println();
+        System.out.println("\n");
+    }
+    
+    public BoardState checkState(Entity entity) {
+        Boolean win = null;
+
+        // Checking rows
+        for (int i = 0; i < size; i++) {
+            win = true;
+            for (int j = 0; j < size; j++) {
+                Entity owner = board[i][j].getOwner();
+                if (owner != entity) {
+                    win = false;
+                    break;
+                }
+            }
+
+            if (win) {
+                state = BoardState.WINNER;
+                return state;
+            }
+        }
+
+        // Checking cols
+        for (int i = 0; i < size; i++) {
+            win = true;
+            for (int j = 0; j < size; j++) {
+                Entity owner = board[j][i].getOwner();
+                if (owner != entity) {
+                    win = false;
+                    break;
+                }
+            }
+
+            if (win) {
+                state = BoardState.WINNER;
+                return state;
+            }
+        }
+
+        // Checking diagonals
+        win = true;
+        for (int i = 0; i < size; i++) {
+            Entity owner = board[i][i].getOwner();
+            if (owner != entity) {
+                win = false;
+                break;
+            }
+        }
+
+        if (win) {
+            state = BoardState.WINNER;
+            return state;
+        }
+
+        win = true;
+        for (int i = 0; i < size; i++) {
+            Entity owner = board[i][size - 1 - i].getOwner();
+            if (owner != entity) {
+                win = false;
+                break;
+            }
+        }
+
+        if (win) {
+            state = BoardState.WINNER;
+            return state;
+        }
+
+        // There is no empty tiles - Then it's a draw
+        if (getFreeTiles().isEmpty()) {
+            state = BoardState.DRAW;
+            return state;
+        }
+        
+        return state;
+    }
+
+    public void reset() {
+        initBoard(size);
     }
 
     public int getSize() {
         return size * size;
+    }
+
+    public BoardState getState() {
+        return state;
     }
 }

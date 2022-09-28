@@ -1,12 +1,22 @@
 public abstract class Entity {
     private String letter;
+    private int wins;
 
     public Entity(String letter) {
         this.letter = letter;
+        this.wins = 0;
     }
 
     public String getLetter() {
         return letter;
+    }
+
+    public void addWin() {
+        wins++;
+    }
+
+    public int getWins() {
+        return wins;
     }
 
     public Boolean isEntity() {
