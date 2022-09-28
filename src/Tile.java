@@ -5,27 +5,22 @@ enum TileState {
 
 public class Tile {
     private TileState state;
-    private String value;
+    private Entity owner;
 
     public Tile() {
         state = TileState.FREE;
-        value = "";
     }
 
-    public Tile(TileState state, String value) {
-        this.state = state;
-        this.value = value;
+    public void markTile(Entity entity) {
+        this.state = TileState.OCCUPIED;
+        this.owner = entity;
     }
 
     public TileState getState() {
         return state;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public String getValueOrDefault() {
-        return value.isEmpty() ? "⬜" : value;
+    public Entity getOwner() {
+        return owner;
     }
 }

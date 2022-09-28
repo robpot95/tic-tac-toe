@@ -9,4 +9,13 @@ public class Player extends Entity {
     public String getName() {
         return name;
     }
+
+    public Boolean isPlayer() {
+        return true;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return this;
+    }
 }

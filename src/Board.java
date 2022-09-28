@@ -1,42 +1,60 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 
 class Board {
-    private HashMap<Integer, Tile> board = new HashMap<Integer, Tile>();
+    private Tile[][] board;
     private int size = 3;
 
     public Board() {
+        new Board(3);
     }
 
     public Board(int size) {
         // Create board depending on which size they choose
+        this.board = new Tile[size][size];
         this.size = size;
-        for (int i = 0; i < size * size; i++) {
-            board.put(i, new Tile());
+        for (int row = 0; row < size; row++){
+            for (int col = 0; col < size; col++) {
+                board[row][col] = new Tile();
+            }
         }
     }
- 
-    public void show() {
-        // Loop through the board and show the values
-        for (int i = 0; i < board.size(); i++) {
-            // When we get 0 then we add new line to break the board up
-            if (i % size == 0) {
-                System.out.println("");
+
+    public ArrayList<Tile> getTiles() {
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+        for (int col = 0; col < size; col++) {
+            for (int row = 0; row < size; row++) {
+                tiles.add(board[col][row]);
             }
-            System.out.print(board.get(i).getValueOrDefault());
         }
+
+        return tiles;
     }
 
     public ArrayList<Tile> getFreeTiles() {
-        // Loop through the tiles and find a tile which is not occupied at the moment
         ArrayList<Tile> tiles = new ArrayList<Tile>();
-        for (Tile tile : board.values()) {
+        for (Tile tile : getTiles()) {
             if (tile.getState() == TileState.FREE) {
                 tiles.add(tile);
             }
-        }   
-
+        }
 
         return tiles;
+    }
+
+    public void show() {
+        for (int i = 0; i < getTiles().size(); i++) {
+            if (i != 0 && i % size == 0) {
+                System.out.println();
+            }
+
+            Entity owner = getTiles().get(i).getOwner();
+            System.out.print(owner != null ? owner.getLetter() : "⬜");
+        }
+
+        System.out.println();
+    }
+
+    public int getSize() {
+        return size * size;
     }
 }

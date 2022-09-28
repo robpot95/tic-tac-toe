@@ -8,4 +8,18 @@ public abstract class Entity {
     public String getLetter() {
         return letter;
     }
+
+    public Boolean isEntity() {
+        return true;
+    }
+
+    public Boolean isPlayer() {
+        return false;
+    }
+
+    public Boolean isComp() {
+        return false;
+    }
+
+    public abstract Player getPlayer();
 }
