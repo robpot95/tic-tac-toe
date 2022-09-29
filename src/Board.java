@@ -32,6 +32,7 @@ class Board {
     }
 
     public ArrayList<Tile> getTiles() {
+        // Lets fetch all the tiles and store them into an Array
         ArrayList<Tile> tiles = new ArrayList<Tile>();
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
@@ -43,6 +44,7 @@ class Board {
     }
 
     public ArrayList<Tile> getFreeTiles() {
+        // Loop through the tiles and find those which is not occupied and store them into an Array 
         ArrayList<Tile> tiles = new ArrayList<Tile>();
         for (Tile tile : getTiles()) {
             if (tile.getState() == TileState.FREE) {
@@ -54,6 +56,7 @@ class Board {
     }
 
     public void show() {
+        // Show us the board
         for (int i = 0; i < getTiles().size(); i++) {
             if (i != 0 && i % size == 0) {
                 System.out.println();

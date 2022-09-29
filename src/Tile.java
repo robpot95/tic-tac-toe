@@ -11,7 +11,7 @@ public class Tile {
         state = TileState.FREE;
     }
 
-    public void markTile(Entity entity) {
+    public void setOwner(Entity entity) {
         this.state = TileState.OCCUPIED;
         this.owner = entity;
     }
