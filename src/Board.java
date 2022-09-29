@@ -33,9 +33,9 @@ class Board {
 
     public ArrayList<Tile> getTiles() {
         ArrayList<Tile> tiles = new ArrayList<Tile>();
-        for (int col = 0; col < size; col++) {
-            for (int row = 0; row < size; row++) {
-                tiles.add(board[col][row]);
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                tiles.add(board[row][col]);
             }
         }
 
@@ -60,7 +60,12 @@ class Board {
             }
 
             Entity owner = getTiles().get(i).getOwner();
-            System.out.print(owner != null ? owner.getLetter() : "⬜");
+
+            if (i % size + 1 == 0) {
+                System.out.print(owner != null ? owner.getLetter() : i + 1);
+            } else {
+                System.out.print((owner != null ? owner.getLetter() : i + 1) + " | ");
+            }
         }
 
         System.out.println("\n");

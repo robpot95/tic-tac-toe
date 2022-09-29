@@ -17,31 +17,57 @@ public class Game {
         COMP,
     }
 
-    private GameState state;
+    private GameState state = GameState.INIT;
     private GameType type;
     private Turn turn;
 
-    private final Board board;
+    private Board board;
     private final ArrayList<Entity> entites = new ArrayList<Entity>();
     private final static Random random = new Random();
     private final static Scanner userInput = new Scanner(System.in);
 
     public Game() {
-        this.state = GameState.INIT;
-        System.out.print("Welcome to Tic-Tac-Toe.\nPlease choose board size:\n>> ");
-        board = new Board(userInput.nextInt());
-        System.out.print("Choose gameplay:\n1. Player vs Player\n2. Player vs Comp\n>> ");
-        type = userInput.nextInt() == 1 ? GameType.PLAYER_VS_PLAYER : GameType.PLAYER_VS_COMP;
-        userInput.nextLine();
-        if (type == GameType.PLAYER_VS_PLAYER) {
-            System.out.print("Player 1, please write your name:\n>> ");
-            entites.add(new Player(userInput.nextLine(), "❌"));
-            System.out.print("Player 2, please write your name:\n>> ");
-            entites.add(new Player(userInput.nextLine(), "⭕"));
-        } else if (type == GameType.PLAYER_VS_COMP) {
-            System.out.print("Please write your name:\n>> ");
-            entites.add(new Player(userInput.nextLine(), "❌"));
-            entites.add(new Comp("⭕"));
+        try {
+            int size;
+            do {
+                System.out.print("Welcome to Tic-Tac-Toe.\nPlease choose board size:\n>> ");
+                size = userInput.nextInt();
+                board = new Board(size);
+            } while (size < 2);
+        } catch (Exception e) {
+            System.out.println("Invalid board size: " + e.getMessage() + ". A default board size of 3 has been created.");
+            board = new Board();
+            userInput.nextLine();
+        }
+
+        try {
+            int gameType;
+            do {
+                System.out.print("Choose gameplay:\n1. Player vs Player\n2. Player vs Comp\n>> ");
+                gameType = userInput.nextInt();
+                type = gameType == 1 ? GameType.PLAYER_VS_PLAYER : GameType.PLAYER_VS_COMP;
+            } while (gameType > GameType.values().length);
+        } catch (Exception e) {
+            System.out.println("Invalid gameplay: " + e.getMessage() + ". Option 2 has been selected as a default.");
+            type = GameType.PLAYER_VS_COMP;
+        }
+
+        switch (type) {
+            case PLAYER_VS_PLAYER:
+                userInput.nextLine();
+                System.out.print("Player 1, please write your name:\n>> ");
+                entites.add(new Player(userInput.nextLine(), "❌"));
+                System.out.print("Player 2, please write your name:\n>> ");
+                entites.add(new Player(userInput.nextLine(), "⭕"));
+                break;
+            case PLAYER_VS_COMP:
+                userInput.nextLine();
+                System.out.print("Please write your name:\n>> ");
+                entites.add(new Player(userInput.nextLine(), "❌"));
+                entites.add(new Comp("⭕"));
+                break;
+            default:
+                break;
         }
         
         state = GameState.STARTED;
@@ -68,7 +94,6 @@ public class Game {
                     Entity comp = entites.get(1);
                     tiles.get(random.nextInt(tiles.size())).markTile(comp);
                     if (board.checkState(comp) != BoardState.NONE) {
-                        state = GameState.ENDED;
                         announcement(comp);
                     }
                 }
@@ -80,9 +105,17 @@ public class Game {
 
     private Boolean makeMove(Player player) {
         board.show();
-        System.out.print(player.getName() + ", please make your move\n>> ");
-        int tileId = userInput.nextInt();
-        if (tileId < 0 || tileId > board.getSize()) {
+
+        int tileId = -1;
+        try {
+            System.out.print(player.getName() + ", please make your move\n>> ");
+            tileId = userInput.nextInt();
+        } catch (Exception e) {
+            System.out.println("Invalid move: " + e.getMessage());
+            userInput.nextLine();
+        }
+
+        if (tileId == -1 || tileId < 0 || tileId > board.getSize()) {
             System.out.println("Sorry but that spot does not exsist.");
             return false;
         }
@@ -95,13 +128,14 @@ public class Game {
 
         tile.markTile(player);
         if (board.checkState(player) != BoardState.NONE) {
-            state = GameState.ENDED;
             announcement(player);
         }
         return true;
     }
 
     private void announcement(Entity lastMove) {
+        state = GameState.ENDED;
+
         userInput.nextLine();
         board.show();
         if (board.getState() == BoardState.WINNER) {
