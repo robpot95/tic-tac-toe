@@ -7,6 +7,8 @@ public abstract class Entity {
         this.wins = 0;
     }
 
+    public abstract Boolean makeMove(Tile tile);
+
     public String getLetter() {
         return letter;
     }

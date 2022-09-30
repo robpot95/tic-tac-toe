@@ -11,4 +11,10 @@ public class Comp extends Entity {
     public Player getPlayer() {
         return null;
     }
+
+    @Override
+    public Boolean makeMove(Tile tile) {
+        tile.setOwner(this);
+        return true;
+    }
 }

@@ -72,23 +72,29 @@ public class Game {
         while (state == GameState.STARTED) {
             if (type == GameType.PLAYER_VS_PLAYER) {
                 // When there is Player vs Player we assign second player as COMP. So we use inline condition to check who made the move
-                Boolean isMoved = makeMove(entites.get(turn == Turn.PLAYER ? 0 : 1).getPlayer());
-                if (!isMoved) {
+                Boolean move = canMove(entites.get(turn == Turn.PLAYER ? 0 : 1).getPlayer());
+                if (!move) {
                     continue;
                 }
             } else if (type == GameType.PLAYER_VS_COMP) {
                 if (turn == Turn.PLAYER) {
                     // Player is first in the array, so we select the player using the index 0
-                    Boolean isMoved = makeMove(entites.get(0).getPlayer());
-                    if (!isMoved) {
+
+                    Player player = entites.get(0).getPlayer();
+                    Boolean move = canMove(player);
+                    if (!move) {
                         continue;
+                    }
+
+                    if (board.checkState(player) != BoardState.NONE) {
+                        announcement(player);
                     }
                 } else if (turn == Turn.COMP) {
                     ArrayList<Tile> tiles = board.getFreeTiles();
                     Entity comp = entites.get(1);
 
                     // Select random free tile
-                    tiles.get(random.nextInt(tiles.size())).setOwner(comp);
+                    comp.makeMove(tiles.get(random.nextInt(tiles.size())));
                     if (board.checkState(comp) != BoardState.NONE) {
                         announcement(comp);
                     }
@@ -99,7 +105,7 @@ public class Game {
         }
     }
 
-    private Boolean makeMove(Player player) {
+    private Boolean canMove(Player player) {
         board.show();
 
         System.out.print(player.getName() + ", please make your move\n>> ");
@@ -111,25 +117,13 @@ public class Game {
             return false;
         }
 
-        // Tile is occupied, we failed to make the move
-        Tile tile = board.getTiles().get(tileId - 1);
-        if (tile.getState() == TileState.OCCUPIED) {
-            System.out.println("Sorry but that spot is already taken.");
-            return false;
-        }
-
-        // We we able to take this tile and check if we won, lost or a draw
-        tile.setOwner(player);
-        if (board.checkState(player) != BoardState.NONE) {
-            announcement(player);
-        }
-        return true;
+        // We are returning the value of MakeMove if we were able to move
+        return player.makeMove(board.getTiles().get(tileId - 1));
     }
 
     private void announcement(Entity lastMove) {
         // BoardState has changed to WIN OR DRAW, we shall check using the last "player" who made the move. If it's the person who won or just a draw
         state = GameState.ENDED;
-        userInput.nextLine();
         board.show();
 
         // Somebody won, add the score to that entity
