@@ -60,6 +60,7 @@ public class Game {
                 break;
         }
         
+        // Change the gameState and access the gameLoop
         state = GameState.STARTED;
         GameLoop();
     }
@@ -72,20 +73,26 @@ public class Game {
         while (state == GameState.STARTED) {
             if (type == GameType.PLAYER_VS_PLAYER) {
                 // When there is Player vs Player we assign second player as COMP. So we use inline condition to check who made the move
-                Boolean move = canMove(entites.get(turn == Turn.PLAYER ? 0 : 1).getPlayer());
+                Player player = entites.get(turn == Turn.PLAYER ? 0 : 1).getPlayer();
+                Boolean move = canMove(player);
                 if (!move) {
                     continue;
+                }
+
+                // After a move been made, we check if boardState has been changed to winner or draw
+                if (board.checkState(player) != BoardState.NONE) {
+                    announcement(player);
                 }
             } else if (type == GameType.PLAYER_VS_COMP) {
                 if (turn == Turn.PLAYER) {
                     // Player is first in the array, so we select the player using the index 0
-
                     Player player = entites.get(0).getPlayer();
                     Boolean move = canMove(player);
                     if (!move) {
                         continue;
                     }
 
+                    // After a move been made, we check if boardState has been changed to winner or draw
                     if (board.checkState(player) != BoardState.NONE) {
                         announcement(player);
                     }
@@ -101,6 +108,7 @@ public class Game {
                 }
             }
 
+            // Here we switch whose turn it is
             turn = turn == Turn.PLAYER ? Turn.COMP : Turn.PLAYER;
         }
     }
@@ -109,15 +117,15 @@ public class Game {
         board.show();
 
         System.out.print(player.getName() + ", please make your move\n>> ");
-        int tileId = readNumberFromInput().intValue();
 
         // Make sure that user does not write index outside the board
+        int tileId = readNumberFromInput().intValue();
         if (tileId < 0 || tileId > board.getSize()) {
             System.out.println("Sorry but that spot does not exsist.");
             return false;
         }
 
-        // We are returning the value of MakeMove if we were able to move
+        // We are returning the bool value of makeMove if we were able to move or not
         return player.makeMove(board.getTiles().get(tileId - 1));
     }
 
@@ -126,7 +134,7 @@ public class Game {
         state = GameState.ENDED;
         board.show();
 
-        // Somebody won, add the score to that entity
+        // Last entity which made the move won, add the score to that entity else it was a draw
         if (board.getState() == BoardState.WINNER) {
             System.out.format("The winner of this game is %s\n", lastMove.getPlayer() != null ? lastMove.getPlayer().getName() : "Comp");
             lastMove.addWin();
@@ -149,7 +157,7 @@ public class Game {
     }
 
     private Number readNumberFromInput() {
-        // We run this function until user write number
+        // We run this function until user write a number, Also this function accept double, float, byte and etc ...
         while (true) {
             try {
                 return NumberFormat.getInstance().parse(userInput.nextLine());

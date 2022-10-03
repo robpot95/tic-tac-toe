@@ -63,7 +63,6 @@ class Board {
             }
 
             Entity owner = getTiles().get(i).getOwner();
-
             if (i % size + 1 == 0) {
                 System.out.print(owner != null ? owner.getLetter() : i + 1);
             } else {
@@ -77,7 +76,7 @@ class Board {
     public BoardState checkState(Entity entity) {
         Boolean win = null;
 
-        // Checking rows
+        // Checking rows for a winner
         for (int i = 0; i < size; i++) {
             win = true;
             for (int j = 0; j < size; j++) {
@@ -94,7 +93,7 @@ class Board {
             }
         }
 
-        // Checking cols
+        // Checking cols for a winner
         for (int i = 0; i < size; i++) {
             win = true;
             for (int j = 0; j < size; j++) {
@@ -111,7 +110,7 @@ class Board {
             }
         }
 
-        // Checking diagonals
+        // Checking diagonals for a winner
         win = true;
         for (int i = 0; i < size; i++) {
             Entity owner = board[i][i].getOwner();
@@ -146,7 +145,7 @@ class Board {
             return state;
         }
         
-        return state;
+        return BoardState.NONE;
     }
 
     public void reset() {

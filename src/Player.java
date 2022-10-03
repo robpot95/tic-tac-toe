@@ -16,13 +16,13 @@ public class Player extends Entity {
 
     @Override
     public Boolean makeMove(Tile tile) {
-        // Tile is occupied, we failed to make the move
+        // Tile is occupied, we failed to make a move
         if (tile.getState() == TileState.OCCUPIED) {
             System.out.println("Sorry but that spot is already taken.");
             return false;
         }
 
-        // We are the owner of this tile
+        // We are the owner of this tile now
         tile.setOwner(this);
         return true;
     }

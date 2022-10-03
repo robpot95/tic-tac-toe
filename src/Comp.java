@@ -14,6 +14,7 @@ public class Comp extends Entity {
 
     @Override
     public Boolean makeMove(Tile tile) {
+        // We are the owner this tile now
         tile.setOwner(this);
         return true;
     }
